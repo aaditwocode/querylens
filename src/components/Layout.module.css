@@ -1,0 +1,146 @@
+.shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* HEADER */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 0 2rem;
+  height: 64px;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+  background: rgba(9, 9, 14, 0.5);
+  backdrop-filter: blur(0px);
+}
+
+.headerScrolled {
+  border-bottom-color: var(--border);
+  background: rgba(9, 9, 14, 0.92);
+  backdrop-filter: blur(20px);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+}
+
+.logoIcon {
+  color: var(--accent);
+  display: flex;
+}
+
+.logoText span {
+  color: var(--accent);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.navLink {
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius);
+  transition: all 0.2s;
+}
+
+.navLink:hover {
+  color: var(--text-secondary);
+  background: rgba(255,255,255,0.04);
+}
+
+.navLinkActive {
+  color: var(--accent) !important;
+  background: var(--accent-dim) !important;
+}
+
+.ctaBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: #000;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-decoration: none;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.ctaBtn:hover {
+  background: #fff;
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+
+/* MAIN */
+.main {
+  flex: 1;
+  padding-top: 64px;
+}
+
+/* FOOTER */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 1.5rem 2rem;
+  margin-top: auto;
+}
+
+.footerInner {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.footerLogo {
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--accent);
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.footerText {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  flex: 1;
+}
+
+.footerRight {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .nav { display: none; }
+  .ctaBtn span { display: none; }
+  .footerText { display: none; }
+}
