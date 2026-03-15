@@ -189,6 +189,8 @@
   font-size: 0.83rem;
   color: var(--text-secondary);
   line-height: 1.7;
+  white-space: pre-wrap; 
+  line-height: 1.6;
 }
 
 .syntaxErr {
