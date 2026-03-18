@@ -64,9 +64,6 @@ export default function Layout() {
           <span className={styles.footerText}>
             AI-Powered Static SQL Analysis — No DB Connection Required
           </span>
-          <span className={styles.footerRight}>
-            JIIT Noida · GenAI Workshop PBL
-          </span>
         </div>
       </footer>
     </div>

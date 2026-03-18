@@ -12,7 +12,7 @@ const phases = [
   {
     num: '02',
     title: 'Syntax Validation',
-    tech: 'SQLglot / SQLparse',
+    tech: 'SQLglot',
     desc: 'The Python backend parses the raw SQL string locally using SQLglot to catch syntax errors before forwarding to the AI—fast, cheap, deterministic.',
   },
   {
@@ -35,20 +35,13 @@ const phases = [
   },
 ]
 
-const team = [
-  { name: 'Aaditya Pratap Singh', enrollment: '23103298' },
-  { name: 'Arpit Varshney',       enrollment: '23103299' },
-  { name: 'Prakhar Singhal',      enrollment: '23103303' },
-  { name: 'Vasu Tayal',           enrollment: '23103374' },
-]
 
 const stack = [
   { label: 'Frontend',          value: 'React.js + Vite + CSS Modules' },
   { label: 'Routing',           value: 'React Router v6' },
-  { label: 'AI Integration',    value: 'Anthropic API (Claude)' },
-  { label: 'Syntax Validation', value: 'SQLglot / SQLparse (Python)' },
-  { label: 'Backend API',       value: 'FastAPI or Flask (Python)' },
-  { label: 'Fonts',             value: 'Syne (display) + Space Mono (code)' },
+  { label: 'AI Integration',    value: 'Gemini API (2.5 Flash)' },
+  { label: 'Syntax Validation', value: 'SQLglot (Python)' },
+  { label: 'Backend API',       value: 'FastAPI (Python)' }
 ]
 
 export default function About() {
@@ -58,11 +51,6 @@ export default function About() {
       <div className={styles.pageHeader}>
         <span className={styles.pageTag}>// project overview</span>
         <h1 className={styles.pageTitle}>About QueryLens</h1>
-        <p className={styles.pageSub}>
-          A GenAI Workshop Project-Based Learning submission at{' '}
-          <strong>Jaypee Institute of Information Technology, Noida</strong>.
-          Supervised by <strong>Dr. Astha Singh</strong>.
-        </p>
       </div>
 
       {/* Problem + Solution */}
@@ -142,30 +130,6 @@ export default function About() {
         </div>
       </section>
 
-      {/* Team */}
-      <section className={styles.teamSection}>
-        <div className={styles.sectionHeader}>
-          <span className={styles.sectionTag}>// contributors</span>
-          <h2 className={styles.sectionTitle}>The Team</h2>
-        </div>
-        <div className={styles.teamGrid}>
-          {team.map((m, i) => (
-            <div key={i} className={styles.memberCard}>
-              <div className={styles.memberAvatar}>
-                {m.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-              </div>
-              <div>
-                <div className={styles.memberName}>{m.name}</div>
-                <div className={styles.memberEnrollment}>{m.enrollment}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className={styles.supervisor}>
-          <span className={styles.supervisorLabel}>Under the supervision of</span>
-          <span className={styles.supervisorName}>Dr. Astha Singh</span>
-        </div>
-      </section>
 
       {/* CTA */}
       <div className={styles.cta}>

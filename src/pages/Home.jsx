@@ -78,10 +78,6 @@ export default function Home() {
 
       {/* Hero */}
       <section className={styles.hero}>
-        <div className={styles.heroBadge}>
-          <span className={styles.badgeDot} />
-          GenAI Workshop · PBL Project · JIIT Noida
-        </div>
 
         <h1 className={styles.heroTitle}>
           Static SQL Analysis<br />
