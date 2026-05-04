@@ -1,9 +1,10 @@
 
 const API_BASE_URL = "https://aydin-unstandardised-nonerroneously.ngrok-free.dev";
+const FLASK_BASE_URL = "http://127.0.0.1:5001/api"
 
 export async function analyseQuery(data) {
   try {
-    const response = await fetch(`${API_BASE_URL}/analyze`, {
+    const response = await fetch(`${FLASK_BASE_URL}/analyze`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -22,7 +23,7 @@ export async function analyseQuery(data) {
     }
 
     const rawData = await response.json();
-
+    console.log(rawData);
 
     return {
       syntax_valid: true,
