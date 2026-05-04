@@ -1,8 +1,8 @@
 # QueryLens — AI-Powered Static SQL Analyser
 
-A GenAI Workshop Project-Based Learning submission at  
+A Project-Based Learning submission at  
 **Jaypee Institute of Information Technology, Noida**  
-Supervised by **Dr. Astha Singh**
+
 
 ## Team
 
