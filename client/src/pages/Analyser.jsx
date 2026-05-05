@@ -17,17 +17,42 @@ CREATE TABLE orders (
   total DECIMAL(10,2),
   status VARCHAR(50) DEFAULT 'pending',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);`
+);`;
 
 const EXAMPLE_QUERY = `SELECT * FROM orders, users
-WHERE orders.user_id = users.id
-AND orders.status = 'active'
-ORDER BY orders.created_at DESC;`
+WHERE orders.user_id = users.id AND orders.status = 'active'
+ORDER BY orders.created_at DESC;`;
+
+const DEFAULT_TABLE_STATS = [
+  {
+    table_name: "orders",
+    row_count: 50000,
+    tuple_size_bytes: 120,
+    distinct_values: { user_id: 10000, status: 4 }
+  },
+  {
+    table_name: "users",
+    row_count: 10000,
+    tuple_size_bytes: 85,
+    distinct_values: { id: 10000 }
+  }
+];
 
 export default function Analyser() {
   const [schema, setSchema] = useState('')
   const [query, setQuery]   = useState('')
   const [dbSize, setDbSize] = useState('medium')
+  
+  // Cost-Based Configuration State
+  const [showAdvanced, setShowAdvanced] = useState(false)
+  const [hardwareStats, setHardwareStats] = useState({
+    block_size_bytes: 8192,
+    seek_time_ms: 4.0,
+    transfer_time_ms: 0.1
+  })
+  
+  const [tableStatsText, setTableStatsText] = useState(JSON.stringify(DEFAULT_TABLE_STATS, null, 2))
+
   const { run, loading, result, error, phase, setResult, setError } = useAnalysis()
   const resultRef = useRef(null)
 
@@ -36,8 +61,26 @@ export default function Analyser() {
       setError('Please enter a SQL query to analyse.')
       return
     }
+
+    // Parse the JSON array before sending
+    let parsedTableStats = [];
+    if (tableStatsText.trim()) {
+      try {
+        parsedTableStats = JSON.parse(tableStatsText);
+      } catch (err) {
+        setError('Invalid JSON format in Table Statistics. Please check your syntax.');
+        return;
+      }
+    }
+
     try {
-      await run({ schema, query, dbSize })
+      await run({ 
+        schema, 
+        query, 
+        dbSize, 
+        tableStats: parsedTableStats, 
+        hardwareStats 
+      })
       setTimeout(() => resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100)
     } catch (_) { /* error is set by hook */ }
   }
@@ -45,6 +88,7 @@ export default function Analyser() {
   const handleExample = () => {
     setSchema(EXAMPLE_SCHEMA)
     setQuery(EXAMPLE_QUERY)
+    setTableStatsText(JSON.stringify(DEFAULT_TABLE_STATS, null, 2))
     setResult(null)
     setError(null)
   }
@@ -52,6 +96,7 @@ export default function Analyser() {
   const handleClear = () => {
     setSchema('')
     setQuery('')
+    setTableStatsText('[\n\n]')
     setResult(null)
     setError(null)
   }
@@ -60,15 +105,15 @@ export default function Analyser() {
     <div className="max-w-[1400px] mx-auto px-8 pt-12 pb-20">
       {/* Page Header */}
       <div className="mb-10">
-        <span className="block text-[0.72rem] text-accent tracking-[0.1em] mb-2">// sql analyser</span>
+        <span className="block text-[0.72rem] text-accent tracking-[0.1em] mb-2">// cost-based sql analyser</span>
         <h1 className="font-display font-extrabold text-[2.2rem] tracking-[-0.03em] mb-2">Analyse Your Query</h1>
-        <p className="text-text-secondary text-[0.9rem]">Paste your database schema and SQL query below. No DB connection required.</p>
+        <p className="text-text-secondary text-[0.9rem]">Paste your database schema and SQL query below. Mathematical physical I/O costs are calculated automatically.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-        {/* ── LEFT: Inputs ── */}
+        {/* LEFT: Inputs */}
         <div className="flex flex-col gap-4">
-
+          
           {/* Schema Panel */}
           <div className="bg-bg-card border border-border-dim rounded-lg overflow-hidden transition-all duration-200 focus-within:border-border-bright focus-within:shadow-[0_0_0_3px_rgba(0,229,255,0.06)]">
             <div className="flex items-center justify-between px-4 py-3 border-b border-border-dim bg-white/[0.02]">
@@ -142,16 +187,81 @@ export default function Analyser() {
             </div>
             <p className="px-4 pb-3 text-[0.75rem] text-text-muted">
               {({
-                small:      '< 10K rows — startup or dev environment',
-                medium:     '100K–1M rows — typical production app',
-                large:      '1M–100M rows — scaled application',
-                enterprise: '100M+ rows — high-scale production system',
+                small:      '< 10K rows (startup or dev environment)',
+                medium:     '100K - 1M rows (typical production app)',
+                large:      '1M - 100M rows (scaled application)',
+                enterprise: '100M+ rows (high-scale production system)',
               })[dbSize]}
             </p>
           </div>
+          
+          {/* Advanced Configuration Toggle */}
+          <button
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            className="flex items-center justify-between text-[0.82rem] text-accent font-display font-semibold bg-transparent border border-border-dim rounded-base p-3 cursor-pointer hover:border-border-bright hover:bg-white/[0.02]"
+          >
+            <span>Configure Hardware & Statistical Costs</span>
+            <svg width="14" height="14" viewBox="0 0 12 12" fill="none" className={`transition-transform duration-200 ${showAdvanced ? 'rotate-180' : ''}`}>
+              <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
 
-          {/* Actions */}
-          <div className="flex gap-3 flex-wrap">
+          {/* Advanced Configuration Panel */}
+          {showAdvanced && (
+            <div className="flex flex-col gap-4 animate-fade-up">
+              {/* Hardware Stats */}
+              <div className="bg-bg-card border border-border-dim rounded-lg p-4">
+                <span className="block text-[0.78rem] text-text-secondary font-display font-semibold mb-3">Hardware Parameters</span>
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-[0.65rem] text-text-muted mb-1 uppercase tracking-wider">Block (Bytes)</label>
+                    <input
+                      type="number"
+                      value={hardwareStats.block_size_bytes}
+                      onChange={e => setHardwareStats({...hardwareStats, block_size_bytes: parseInt(e.target.value) || 0})}
+                      className="w-full bg-bg-secondary border border-border-dim rounded p-2 text-text-primary font-mono text-[0.8rem] outline-none focus:border-accent transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[0.65rem] text-text-muted mb-1 uppercase tracking-wider">Seek (ms)</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      value={hardwareStats.seek_time_ms}
+                      onChange={e => setHardwareStats({...hardwareStats, seek_time_ms: parseFloat(e.target.value) || 0})}
+                      className="w-full bg-bg-secondary border border-border-dim rounded p-2 text-text-primary font-mono text-[0.8rem] outline-none focus:border-accent transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[0.65rem] text-text-muted mb-1 uppercase tracking-wider">Transfer (ms)</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={hardwareStats.transfer_time_ms}
+                      onChange={e => setHardwareStats({...hardwareStats, transfer_time_ms: parseFloat(e.target.value) || 0})}
+                      className="w-full bg-bg-secondary border border-border-dim rounded p-2 text-text-primary font-mono text-[0.8rem] outline-none focus:border-accent transition-colors"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Table Stats JSON */}
+              <div className="bg-bg-card border border-border-dim rounded-lg overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-border-dim bg-white/[0.02]">
+                  <span className="text-[0.78rem] text-text-secondary font-display font-semibold">Table Statistics (JSON)</span>
+                </div>
+                <textarea
+                  className="w-full bg-transparent border-none outline-none resize-y font-mono text-[0.8rem] text-text-primary p-4 leading-[1.7] min-h-[160px] placeholder:text-text-muted"
+                  value={tableStatsText}
+                  onChange={e => setTableStatsText(e.target.value)}
+                  spellCheck={false}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Actions Block */}
+          <div className="flex gap-3 flex-wrap mt-2">
             <button
               className="flex items-center justify-center gap-2 flex-1 px-6 py-3 bg-accent text-black font-display font-bold text-[0.88rem] border-none rounded-base cursor-pointer transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed hover:not(:disabled):bg-white hover:not(:disabled):shadow-[0_0_20px_rgba(0,229,255,0.4)]"
               onClick={handleAnalyse}
@@ -187,8 +297,8 @@ export default function Analyser() {
           </div>
 
           {error && (
-            <div className="flex items-center gap-2.5 px-4 py-3 bg-warn-dim border border-[rgba(255,107,53,0.3)] rounded-base text-warn text-[0.82rem]">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <div className="flex items-center gap-2.5 px-4 py-3 mt-2 bg-warn-dim border border-[rgba(255,107,53,0.3)] rounded-base text-warn text-[0.82rem]">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="shrink-0">
                 <circle cx="7" cy="7" r="6" stroke="currentColor" strokeWidth="1.2"/>
                 <path d="M7 4v3.5M7 9.5v.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
               </svg>
@@ -197,7 +307,7 @@ export default function Analyser() {
           )}
         </div>
 
-        {/* ── RIGHT: Results ── */}
+        {/* RIGHT: Results */}
         <div className="sticky top-20 max-h-[calc(100vh-100px)] overflow-y-auto" ref={resultRef}>
           {!result && !loading && (
             <div className="flex flex-col items-center justify-center min-h-[400px] border border-dashed border-border-bright rounded-lg text-center px-12 py-12 gap-3">
@@ -213,10 +323,10 @@ export default function Analyser() {
                 Paste your schema and query on the left, then click <strong className="text-text-secondary">Analyse Query</strong>.
               </p>
               <button
-                className="mt-2 text-[0.82rem] text-accent bg-transparent border-none cursor-pointer underline underline-offset-[3px] font-mono"
+                className="mt-2 text-[0.82rem] text-accent bg-transparent border-none cursor-pointer underline underline-offset-[3px] font-mono hover:text-white"
                 onClick={handleExample}
               >
-                Try with an example →
+                Try with an example
               </button>
             </div>
           )}
@@ -228,7 +338,9 @@ export default function Analyser() {
                 style={{ width: 60, height: 60, boxShadow: '0 0 20px rgba(0,229,255,0.4)' }}
               />
               <p className="font-display font-bold text-text-primary text-[0.95rem]">{phase}</p>
-              <p className="text-[0.78rem] text-text-muted">Calling GenAI model for deep static analysis...</p>
+              <p className="text-[0.78rem] text-text-muted text-center max-w-[250px]">
+                Calculating math heuristics and calling GenAI model for deep static analysis...
+              </p>
             </div>
           )}
 

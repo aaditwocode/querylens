@@ -18,8 +18,8 @@ const features = [
         <path d="M10 6v4l3 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
       </svg>
     ),
-    label: 'Performance Analysis',
-    desc: 'Detects full-table scans, missing indexes, N+1 patterns, and costly sequential operations.',
+    label: 'Mathematical Cost Engine',
+    desc: 'Calculates exact physical I/O costs—like block transfers and seek times—using standard relational algebra techniques before AI review.',
   },
   {
     icon: (
@@ -28,7 +28,7 @@ const features = [
       </svg>
     ),
     label: 'Query Optimization',
-    desc: 'Returns a fully rewritten, optimized SQL query alongside the reasoning behind each change.',
+    desc: 'Returns a fully rewritten, optimized SQL query alongside the mathematical reasoning behind each change.',
   },
   {
     icon: (
@@ -38,8 +38,8 @@ const features = [
         <path d="M8 8v9" stroke="currentColor" strokeWidth="1.5"/>
       </svg>
     ),
-    label: 'Schema Awareness',
-    desc: 'Paste your schema definition and the AI understands table structure, relationships, and indexing context.',
+    label: 'Hardware & Schema Awareness',
+    desc: 'Provide your table sizes and disk speeds to let the AI understand exact execution contexts and indexing bottlenecks.',
   },
   {
     icon: (
@@ -47,8 +47,8 @@ const features = [
         <path d="M10 3L3 7v6l7 4 7-4V7l-7-4z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
       </svg>
     ),
-    label: 'Injection Detection',
-    desc: 'Flags potentially dangerous SQL patterns that could lead to injection vulnerabilities in production.',
+    label: 'Intermediate Size Estimation',
+    desc: 'Predicts the size of complex intermediate joins using statistical distinct value analysis to optimize join ordering.',
   },
   {
     icon: (
@@ -58,15 +58,15 @@ const features = [
       </svg>
     ),
     label: 'Structured JSON Output',
-    desc: 'Responses are structured with anti-patterns, explanations, optimized SQL, and index recommendations.',
+    desc: 'Responses are strictly structured with before-and-after ms costs, explanations, optimized SQL, and index recommendations.',
   },
 ]
 
 const stats = [
   { value: '0ms',   label: 'DB Connection Time' },
+  { value: 'I/O',   label: 'Cost Calculations' },
+  { value: 'LLM',   label: 'Powered Insights' },
   { value: '100%',  label: 'Stateless Analysis' },
-  { value: 'LLM',   label: 'Powered Review' },
-  { value: 'Open',  label: 'Source Models' },
 ]
 
 export default function Home() {
@@ -86,15 +86,14 @@ export default function Home() {
       {/* Hero */}
       <section className="relative z-[1] max-w-[900px] mx-auto px-8 pt-[120px] pb-[80px] text-center">
         <h1 className="font-display font-extrabold text-[clamp(2.5rem,6vw,4.5rem)] leading-[1.05] tracking-[-0.03em] text-text-primary mb-6 animate-fade-up">
-          Static SQL Analysis<br />
+          Cost-Based SQL Analysis<br />
           <span className="text-accent" style={{ textShadow: '0 0 40px rgba(0,229,255,0.4)' }}>
             Without a Database
           </span>
         </h1>
-
         <p className="text-lg text-text-secondary max-w-[560px] mx-auto mb-10 leading-[1.8] animate-fade-up">
-          QueryLens uses Generative AI and local syntax parsing to review, optimize,
-          and secure your SQL queries—no sandbox, no DB connection, no risk.
+          QueryLens uses Generative AI and mathematical I/O cost modeling to review, optimize,
+          and speed up your SQL queries—no sandbox, no DB connection, no risk.
         </p>
 
         <div className="flex items-center justify-center gap-4 mb-16 flex-wrap animate-fade-up">
@@ -113,7 +112,7 @@ export default function Home() {
             to="/about"
             className="text-text-secondary text-[0.85rem] no-underline px-3 py-3 transition-colors duration-200 hover:text-accent"
           >
-            Learn How It Works →
+            Learn How It Works
           </Link>
         </div>
 
@@ -142,18 +141,19 @@ export default function Home() {
             <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#ff5f57' }} />
             <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#febc2e' }} />
             <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#28c840' }} />
-            <span className="ml-2 text-[0.72rem] text-text-muted">querylens — analysis output</span>
+            <span className="ml-2 text-[0.72rem] text-text-muted">querylens — cost-based analysis output</span>
           </div>
+          
           <div className="px-6 py-5 text-[0.82rem] leading-[1.7]">
-            <div className="font-mono"><span className="text-text-muted">$</span> querylens analyse --schema schema.sql --query query.sql</div>
+            <div className="font-mono"><span className="text-text-muted">$</span> querylens analyse --schema schema.sql --query query.sql --hw-stats</div>
             <div className="font-mono">&nbsp;</div>
             <div className="font-mono"><span className="text-success">✔</span> Syntax validation passed</div>
-            <div className="font-mono"><span className="text-warn">⚠</span> Anti-patterns detected: 2</div>
+            <div className="font-mono"><span className="text-warn">!</span> Anti-patterns detected: 1</div>
             <div className="font-mono">&nbsp;</div>
-            <div className="font-mono"><span className="text-warn">[ANTI-PATTERN]</span> Full table scan on `orders`</div>
-            <div className="font-mono"><span className="text-warn">[ANTI-PATTERN]</span> Missing index on foreign key `user_id`</div>
+            <div className="font-mono"><span className="text-warn">[COST CALCULATION]</span> Full table scan on `orders` requires <span className="text-[#ff4d4d]">4,125 blocks</span></div>
+            <div className="font-mono"><span className="text-warn">[ORIGINAL COST]</span> Estimated I/O Cost: <span className="text-[#ff4d4d]">412.50 ms</span></div>
             <div className="font-mono">&nbsp;</div>
-            <div className="font-mono"><span className="text-success">[OPTIMIZED QUERY]</span></div>
+            <div className="font-mono"><span className="text-success">[OPTIMIZED SQL]</span></div>
             <div className="font-mono">  SELECT o.id, u.name</div>
             <div className="font-mono">  FROM orders o</div>
             <div className="font-mono">  <span className="text-[#7dd3fc]">INNER JOIN</span> users u ON o.user_id = u.id</div>
@@ -163,8 +163,10 @@ export default function Home() {
             <div className="font-mono"><span className="text-success">[INDEX RECOMMENDATION]</span></div>
             <div className="font-mono">  <span className="text-[#7dd3fc]">CREATE INDEX</span> idx_orders_user_id <span className="text-[#7dd3fc]">ON</span> orders(user_id);</div>
             <div className="font-mono">&nbsp;</div>
-            <div className="font-mono"><span className="text-success">✔</span> Analysis complete in <span className="text-[#fcd34d]">1.24s</span></div>
+            <div className="font-mono"><span className="text-success">[NEW OPTIMIZED COST]</span> Index Seek I/O Cost: <span className="text-[#00ff9d]">16.10 ms (-96%)</span></div>
+            <div className="font-mono"><span className="text-success">✔</span> Analysis complete in <span className="text-[#fcd34d]">1.82s</span></div>
           </div>
+
           {/* Scan line */}
           <div
             className="absolute top-0 left-0 right-0 h-0.5 pointer-events-none animate-scan"
@@ -178,9 +180,10 @@ export default function Home() {
         <div className="text-center mb-16">
           <span className="block text-[0.75rem] text-accent tracking-[0.1em] mb-4">// capabilities</span>
           <h2 className="font-display font-extrabold text-[clamp(1.8rem,4vw,3rem)] text-text-primary tracking-[-0.03em] leading-[1.1]">
-            Everything you need to<br />optimize SQL, safely.
+            Everything you need to<br />optimize SQL, mathematically.
           </h2>
         </div>
+
         <div
           className="grid gap-px bg-border-dim border border-border-dim rounded-lg overflow-hidden"
           style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}
@@ -210,12 +213,13 @@ export default function Home() {
             style={{ background: 'radial-gradient(circle, rgba(0,229,255,0.06) 0%, transparent 70%)' }}
           />
           <h2 className="font-display font-extrabold text-[2rem] tracking-[-0.03em] mb-3">Ready to analyse your SQL?</h2>
-          <p className="text-text-secondary mb-8 text-[0.9rem]">Paste your schema and query. Get instant insights.</p>
+          <p className="text-text-secondary mb-8 text-[0.9rem]">Paste your schema, hardware specs, and query. Get instant insights.</p>
+
           <Link
             to="/analyse"
             className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-black font-display font-bold text-[0.9rem] rounded-base no-underline transition-all duration-200 hover:bg-white hover:shadow-[0_0_30px_rgba(0,229,255,0.4)] hover:-translate-y-px"
           >
-            Open Analyser
+            Open Cost-Based Analyser
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
               <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>

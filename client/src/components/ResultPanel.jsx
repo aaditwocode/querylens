@@ -131,6 +131,7 @@ export default function ResultPanel({ result }) {
       {/* Content */}
       <div className="px-6 py-5">
         {/* Overview */}
+        {/* Overview */}
         {activeTab === 'overview' && (
           <div className="flex flex-col gap-4">
             {result.syntax_error && (
@@ -138,7 +139,36 @@ export default function ResultPanel({ result }) {
                 <strong>Syntax Error:</strong> {result.syntax_error}
               </div>
             )}
+
+            {/* NEW: Mathematical Cost Comparison Block */}
+            {result.cost_metrics && (
+              <div className="bg-bg-secondary border border-border-dim rounded-base p-4">
+                <h4 className="font-display font-bold text-[0.8rem] text-text-secondary mb-3 uppercase tracking-wider">Calculated I/O Cost Analysis</h4>
+                
+                <div className="grid grid-cols-3 gap-4 mb-3">
+                  <div className="flex flex-col bg-bg-card p-3 rounded border border-border-dim">
+                    <span className="text-[0.65rem] text-warn uppercase tracking-wider">Original Cost</span>
+                    <span className="font-display font-bold text-lg text-text-primary">{result.cost_metrics.original_cost_ms} ms</span>
+                  </div>
+                  <div className="flex flex-col bg-bg-card p-3 rounded border border-border-dim">
+                    <span className="text-[0.65rem] text-success uppercase tracking-wider">Optimized Cost</span>
+                    <span className="font-display font-bold text-lg text-text-primary">{result.cost_metrics.optimized_cost_ms} ms</span>
+                  </div>
+                  <div className="flex flex-col bg-[rgba(0,255,157,0.05)] p-3 rounded border border-[rgba(0,255,157,0.2)]">
+                    <span className="text-[0.65rem] text-success uppercase tracking-wider">Improvement</span>
+                    <span className="font-display font-bold text-lg text-success">-{result.cost_metrics.improvement_percentage}%</span>
+                  </div>
+                </div>
+                
+                <p className="text-[0.8rem] text-text-secondary leading-relaxed border-t border-border-dim pt-3">
+                  <span className="font-bold text-accent">Heuristic Analysis: </span> 
+                  {result.cost_metrics.cost_explanation}
+                </p>
+              </div>
+            )}
+
             <div className="grid grid-cols-2 gap-3">
+              {/* Keep the existing Complexity, Issues Found cards here */}
               <div className="bg-bg-secondary border border-border-dim rounded-base p-3.5 flex flex-col gap-1">
                 <span className="text-[0.7rem] text-text-muted uppercase tracking-wider">Issues Found</span>
                 <span
@@ -152,15 +182,8 @@ export default function ResultPanel({ result }) {
                 <span className="text-[0.7rem] text-text-muted uppercase tracking-wider">Index Recommendations</span>
                 <span className="font-display font-bold text-xl tracking-tight text-text-primary">{result.index_recommendations?.length || 0}</span>
               </div>
-              <div className="bg-bg-secondary border border-border-dim rounded-base p-3.5 flex flex-col gap-1">
-                <span className="text-[0.7rem] text-text-muted uppercase tracking-wider">Complexity</span>
-                <span className="font-display font-bold text-xl tracking-tight text-text-primary">{result.complexity || 'N/A'}</span>
-              </div>
-              <div className="bg-bg-secondary border border-border-dim rounded-base p-3.5 flex flex-col gap-1">
-                <span className="text-[0.7rem] text-text-muted uppercase tracking-wider">Query Type</span>
-                <span className="font-display font-bold text-xl tracking-tight text-text-primary">{result.query_type || 'SELECT'}</span>
-              </div>
             </div>
+
             {result.explanation && (
               <div className="bg-bg-secondary border border-border-dim rounded-base p-4">
                 <h4 className="font-display font-bold text-[0.8rem] text-text-secondary mb-2 uppercase tracking-wider">AI Explanation</h4>

@@ -7,7 +7,8 @@ export function useAnalysis() {
   const [error, setError] = useState(null)
   const [phase, setPhase] = useState(null)
 
-  const run = async ({ schema, query, dbSize }) => {
+  // NEW: Added tableStats and hardwareStats to the destructured parameters
+  const run = async ({ schema, query, dbSize, tableStats, hardwareStats }) => {
     setLoading(true)
     setResult(null)
     setError(null)
@@ -15,15 +16,17 @@ export function useAnalysis() {
 
     try {
       await new Promise(r => setTimeout(r, 600))
-      setPhase('Generating AI prompt...')
+      setPhase('Calculating Cost Heuristics & AI Prompts...')
+      
       await new Promise(r => setTimeout(r, 400))
       setPhase('Running GenAI analysis...')
 
-      const data = await analyseQuery({ schema, query, dbSize })
+      // Pass the new variables to the API call
+      const data = await analyseQuery({ schema, query, dbSize, tableStats, hardwareStats })
       setResult(data)
 
       // Save to history
-      saveToHistory({ schema, query, dbSize, result: data })
+      saveToHistory({ schema, query, dbSize, tableStats, hardwareStats, result: data })
       return data
     } catch (e) {
       setError(e.message || 'Unexpected error. Please try again.')
